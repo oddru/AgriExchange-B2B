@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { api } from "~/trpc/react";
+import Link from "next/link";
 
 const categories = ["all", "vegetable", "fruit", "root"];
 
@@ -9,13 +10,13 @@ export default function Home() {
   const utils = api.useUtils();
 
   const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState<number>(1);
+  const [quantity, setQuantity] = useState<number | "">("");
   const [file, setFile] = useState<File | null>(null);
   const [category, setCategory] = useState("vegetable");
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
-  const [price, setPrice] = useState<number>(0);
+  const [price, setPrice] = useState<number | "">("");
   const [unit, setUnit] = useState("kg");
 
   const listings = api.listing.getAll.useQuery();
@@ -23,10 +24,10 @@ export default function Home() {
   const createListing = api.listing.create.useMutation({
     onSuccess: async () => {
       setName("");
-      setQuantity(1);
+      setQuantity("");
       setFile(null);
       setCategory("vegetable");
-      setPrice(0);
+      setPrice("");
       setUnit("kg");
       await utils.listing.getAll.invalidate();
     },
@@ -39,26 +40,14 @@ export default function Home() {
   });
 
   const handleCreate = async () => {
-    if (!name.trim()) {
-      alert("Product name is required");
-      return;
-    }
-
-    if (price <= 0) {
-      alert("Price must be greater than 0");
-      return;
-    }
-
-    if (quantity <= 0) {
-      alert("Quantity must be at least 1");
-      return;
-    }
+    if (!name.trim()) return alert("Product name is required");
+    if (!price || Number(price) <= 0)
+      return alert("Enter a valid price");
+    if (!quantity || Number(quantity) <= 0)
+      return alert("Enter a valid quantity");
 
     let uploadedImageUrl: string | undefined;
 
-    // =========================
-    // IMAGE UPLOAD
-    // =========================
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
@@ -79,7 +68,6 @@ export default function Home() {
       const data = JSON.parse(text);
 
       if (!data.secure_url) {
-        console.error("No image URL:", data);
         alert("Upload failed");
         return;
       }
@@ -87,9 +75,6 @@ export default function Home() {
       uploadedImageUrl = data.secure_url;
     }
 
-    // =========================
-    // CREATE LISTING
-    // =========================
     createListing.mutate({
       name,
       quantity: Number(quantity),
@@ -111,35 +96,33 @@ export default function Home() {
   });
 
   return (
-    <main
-      className="min-h-screen px-6 py-10 bg-cover bg-center text-gray-900"
-      style={{
-        backgroundImage:
-          "url('/abstract-blur-park-with-green-field.jpg')",
-      }}
+    <main className="min-h-screen px-6 py-10 text-gray-900 bg-cover bg-center"
+          style={{
+            backgroundImage: 
+            "linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('/abstract-blur-park-with-green-field.jpg')",
+            backgroundSize: "110%", // edit later
+          }}
     >
       {/* HEADER */}
-      <div className="max-w-5xl mx-auto mb-2 -mt-10 flex items-center gap-4">
+      <div className="max-w-6xl mx-auto flex items-center gap-4 mb-6">
         <img
           src="/agri-ex-logo (1).png"
-          alt="Agri Exchange Logo"
-          className="h-90 w-90 object-contain"
+          className="w-90 h-90 object-contain"
         />
-
         <div>
           <h1 className="text-5xl font-semibold">
             Picked Fresh, Priced Right.
           </h1>
-          <p className="text-gray-600 text-[18px]">
-            Connecting Agriculture Directly To Consumers. Locally Convenient.
+          <p className="text-gray-600 text-[20px]">
+            Connecting Agriculture Directly to Consumers.
           </p>
         </div>
       </div>
 
       {/* SEARCH */}
-      <div className="max-w-5xl mx-auto mb-4 -mt-7">
+      <div className="max-w-6xl mx-auto mb-6 -mt-7">
         <input
-          className="w-full border rounded-xl px-4 py-3 bg-white/80 backdrop-blur-md shadow-sm"
+          className="w-full border rounded-xl px-4 py-3 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-black/10"
           placeholder="Search crops (e.g. tomato, corn...)"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -147,7 +130,7 @@ export default function Home() {
       </div>
 
       {/* FILTER */}
-      <div className="max-w-5xl mx-auto flex gap-2 mb-6 flex-wrap">
+      <div className="max-w-6xl mx-auto flex gap-2 mb-8 flex-wrap">
         {categories.map((c) => (
           <button
             key={c}
@@ -155,7 +138,7 @@ export default function Home() {
             className={`px-4 py-1 rounded-full text-sm transition ${
               filter === c
                 ? "bg-black text-white"
-                : "bg-white/70 hover:bg-white"
+                : "bg-white border hover:bg-gray-100"
             }`}
           >
             {c}
@@ -163,93 +146,78 @@ export default function Home() {
         ))}
       </div>
 
-      {/* FORM (FIXED UX) */}
-      <div className="max-w-5xl mx-auto mb-10 bg-white/90 backdrop-blur-md p-6 rounded-2xl border shadow-sm">
-        <h2 className="font-semibold mb-4 text-lg">Create Listing</h2>
+      {/* FORM */}
+      <div className="max-w-6xl mx-auto mb-12 bg-white p-6 rounded-2xl border shadow-sm">
+        <h2 className="font-semibold mb-5 text-lg">
+          Create Listing
+        </h2>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* PRODUCT NAME */}
-          <div>
-            <label className="text-sm text-gray-600">
-              Product Name
-            </label>
-            <input
-              className="border rounded-lg px-3 py-2 w-full"
-              placeholder="e.g. Fresh Tomatoes"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          {/* NAME */}
+          <input
+            className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-black/10 outline-none"
+            placeholder="Product name (e.g. Fresh tomatoes)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
           {/* CATEGORY */}
-          <div>
-            <label className="text-sm text-gray-600">
-              Category
-            </label>
-            <select
-              className="border rounded-lg px-3 py-2 w-full"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="vegetable">Vegetable</option>
-              <option value="fruit">Fruit</option>
-              <option value="root">Root Crop</option>
-            </select>
-          </div>
+          <select
+            className="border rounded-lg px-3 py-2 bg-white"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="vegetable">Vegetable</option>
+            <option value="fruit">Fruit</option>
+            <option value="root">Root crop</option>
+          </select>
 
-          {/* QUANTITY */}
-          <div>
-            <label className="text-sm text-gray-600">
-              Quantity Available
-            </label>
-            <input
-              type="number"
-              className="border rounded-lg px-3 py-2 w-full"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </div>
-
-          {/* PRICE */}
-          <div>
-            <label className="text-sm text-gray-600">
-              Price (₱ per unit)
-            </label>
-            <input
-              type="number"
-              className="border rounded-lg px-3 py-2 w-full"
-              value={price}
-              onChange={(e) => setPrice(Number(e.target.value))}
-            />
-          </div>
-
-          {/* UNIT */}
-          <div>
-            <label className="text-sm text-gray-600">
-              Unit Type
-            </label>
-            <select
-              className="border rounded-lg px-3 py-2 w-full"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-            >
-              <option value="kg">kg</option>
-              <option value="bundle">bundle</option>
-              <option value="piece">piece</option>
-            </select>
-          </div>
-
-          {/* IMAGE */}
-          <div>
-            <label className="text-sm text-gray-600">
-              Upload Image
-            </label>
+          {/* FILE INPUT (FIXED UI) */}
+          <label className="border rounded-lg px-3 py-2 cursor-pointer bg-white flex items-center justify-between">
+            <span className="text-gray-500 text-sm">
+              {file ? file.name : "Upload product image"}
+            </span>
             <input
               type="file"
-              className="border rounded-lg px-3 py-2 w-full"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="hidden"
+              onChange={(e) =>
+                setFile(e.target.files?.[0] || null)
+              }
             />
-          </div>
+          </label>
+
+          {/* QUANTITY */}
+          <input
+            type="number"
+            className="border rounded-lg px-3 py-2 appearance-none"
+            placeholder="Quantity available"
+            value={quantity}
+            onChange={(e) =>
+              setQuantity(e.target.value === "" ? "" : Number(e.target.value))
+            }
+          />
+
+          {/* PRICE */}
+          <input
+            type="number"
+            className="border rounded-lg px-3 py-2 appearance-none"
+            placeholder="Price (₱ per unit)"
+            value={price}
+            onChange={(e) =>
+              setPrice(e.target.value === "" ? "" : Number(e.target.value))
+            }
+          />
+
+          {/* UNIT */}
+          <select
+            className="border rounded-lg px-3 py-2 bg-white"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
+          >
+            <option value="kg">kg</option>
+            <option value="bundle">bundle</option>
+            <option value="piece">piece</option>
+          </select>
         </div>
 
         <button
@@ -260,54 +228,34 @@ export default function Home() {
         </button>
       </div>
 
-      {/* RESULTS */}
-      <div className="max-w-5xl mx-auto mb-3 text-sm text-gray-500">
-        Showing {filtered?.length || 0} listings
-      </div>
-
       {/* GRID */}
-      <div className="max-w-5xl mx-auto grid sm:grid-cols-2 gap-4">
+      <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered?.map((item) => (
-          <div
+          <Link
+            href={`/listing/${item.id}`}
             key={item.id}
-            className="bg-white/90 border rounded-xl overflow-hidden shadow-sm"
+            className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition"
           >
             <img
               src={
                 item.imageUrl ||
                 "https://images.unsplash.com/photo-1546470427-1ec7c0e5b4c6"
               }
-              className="h-40 w-full object-cover"
-              alt={item.name}
+              className="h-48 w-full object-cover group-hover:scale-105 transition"
             />
 
-            <div className="p-4 flex justify-between">
-              <div>
-                <p className="font-semibold">{item.name}</p>
+            <div className="p-4">
+              <p className="font-semibold">{item.name}</p>
 
-                <span className="text-xs px-2 py-1 bg-gray-200 rounded-full">
-                  {item.category}
-                </span>
+              <p className="text-green-700 text-sm mt-1">
+                ₱{item.price ?? 0} / {item.unit ?? "kg"}
+              </p>
 
-                <p className="text-sm text-green-700 mt-1 font-medium">
-                  ₱{item.price ?? 0} / {item.unit ?? "kg"}
-                </p>
-
-                <p className="text-sm text-gray-500">
-                  Qty: {item.quantity}
-                </p>
-              </div>
-
-              <button
-                className="text-red-500 text-sm"
-                onClick={() =>
-                  deleteListing.mutate({ id: item.id })
-                }
-              >
-                Delete
-              </button>
+              <p className="text-gray-500 text-sm">
+                {item.quantity} available
+              </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </main>
