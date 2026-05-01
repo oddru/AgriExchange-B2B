@@ -1,33 +1,31 @@
-<<<<<<< HEAD
-# Create T3 App
+# Butuan Agri-Exchange (Barter 2.0)
+**Transforming Home Gardens into a Hyper-Local Micro-Economy.**
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## The Vision
+In response to the 2026 food inflation and the city's "Gulay sa Panimalay" initiative, **Butuan Agri-Exchange** provides a Peer-to-Peer (P2P) marketplace for urban gardeners. We turn backyard surpluses—like an overabundance of eggplants or tomatoes—into a community resource through smart bartering.
 
-## What's next? How do I make an app with this?
+## Industry Edge: The AI Twist
+This isn't just a classifieds site. We leverage cutting-edge AI to streamline the trade:
+* **Computer Vision Grading:** Automatic object detection categorizes and grades produce quality from a single photo via Cloudinary.
+* **AI Negotiator:** A custom chatbot that suggests "Fair Barter" trades by fetching real-time market prices from Butuan's **Langihan** and **Central** markets.
+* **Inflation Combatant:** Empowering residents to bypass retail markups by trading directly with neighbors.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## The "Speed-Build" Stack
+Built with the 2026 developer "Gold Standard" for type-safety and performance:
+* **Framework:** [T3 Stack](https://create.t3.gg/) (Next.js, TypeScript, tRPC, Tailwind CSS)
+* **Database:** Prisma (with PostgreSQL)
+* **Image Intelligence:** Cloudinary for AI auto-tagging and image optimization.
+* **Deployment:** Vercel (CI/CD optimized).
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Project Structure
+* `src/app`: Next.js App Router for high-performance routing.
+* `src/server`: Type-safe backend logic using tRPC.
+* `src/components`: Reusable UI built with Tailwind CSS.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## Getting Started
+**Clone & Install:**
+   ```bash
+   git clone [https://github.com/oddru/AgriExchange-B2B.git](https://github.com/oddru/AgriExchange-B2B.git)
+   cd AgriExchange-B2B
+   npm install
 
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
-=======
-# AgriExchange-B2B
->>>>>>> 00f884e75ea37c933ead331bf99800b99d610a1c
