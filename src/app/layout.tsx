@@ -22,7 +22,20 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          {/* --- NAVBAR START --- */}
+          <nav className="w-full border-b bg-white px-6 py-3 flex justify-between">
+            <span className="font-semibold text-xl">AgriExchange</span>
+
+            <div className="flex gap-4">
+              <a href="/" className="hover:text-green-600">Marketplace</a>
+              <a href="/create" className="hover:text-green-600">Sell</a>
+            </div>
+          </nav>
+          {/* --- NAVBAR END --- */}
+
+          <main>{children}</main>
+        </TRPCReactProvider>
       </body>
     </html>
   );
