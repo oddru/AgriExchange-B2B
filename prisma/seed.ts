@@ -3,8 +3,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.listing.deleteMany(); // optional but recommended for clean slate
+  // ✅ Create a test user
+  const user = await prisma.user.create({
+    data: {
+      name: "Test User",
+      email: "test@example.com",
+    },
+  });
 
+  // ✅ Create listings linked to user
   await prisma.listing.createMany({
     data: [
       {
@@ -12,27 +19,30 @@ async function main() {
         quantity: 20,
         price: 80,
         unit: "kg",
-        category: "vegetable",
         imageUrl:
-          "https://images.unsplash.com/photo-1546470427-1ec7c0e5b4c6",
+          "https://images.unsplash.com/photo-1561136594-7f68413baa99",
+        category: "vegetable",
+        userId: user.id,
       },
       {
         name: "Sweet Corn",
         quantity: 15,
         price: 50,
         unit: "bundle",
-        category: "vegetable",
         imageUrl:
-          "https://images.unsplash.com/photo-1601598851547-4302969d0614",
+          "https://images.unsplash.com/photo-1506806732259-39c2d0268443",
+        category: "vegetable",
+        userId: user.id,
       },
       {
         name: "Bananas (Saba)",
         quantity: 30,
         price: 60,
         unit: "kg",
-        category: "fruit",
         imageUrl:
-          "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e",
+          "https://images.unsplash.com/photo-1574226516831-e1dff420e8f8",
+        category: "fruit",
+        userId: user.id,
       },
     ],
   });
@@ -42,7 +52,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error("Seed error:", e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {
