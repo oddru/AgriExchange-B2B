@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import Navbar from "~/components/Navbar";
 
 export const metadata: Metadata = {
   title: "AgriExchange",
@@ -24,14 +25,7 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           {/* --- NAVBAR START --- */}
-          <nav className="w-full border-b bg-white px-6 py-3 flex justify-between">
-            <span className="font-semibold text-xl">AgriExchange</span>
-
-            <div className="flex gap-4">
-              <a href="/" className="hover:text-green-600">Marketplace</a>
-              <a href="/create" className="hover:text-green-600">Sell</a>
-            </div>
-          </nav>
+          <Navbar />
           {/* --- NAVBAR END --- */}
 
           <main>{children}</main>
