@@ -33,7 +33,9 @@ const features = [
 
 export default function Home() {
   const router = useRouter();
-  const { data: session } = useSession();
+
+  const sessionResult = useSession();
+  const session = sessionResult?.data ?? null;
 
   const handleSellClick = () => {
     if (!session) {
@@ -46,24 +48,19 @@ export default function Home() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-green-50 via-yellow-50 to-slate-50">
 
-      {/* Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-green-50 to-yellow-50" />
         <div className="absolute inset-0 bg-[url('/abstract-blur-park-with-green-field.jpg')] bg-cover bg-center opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-yellow-100/40" />
       </div>
 
-      {/* HERO */}
       <div className="relative px-4 sm:px-6 lg:px-8 py-10">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-10 items-center">
 
-          {/* LEFT */}
           <div>
             <h1 className="text-5xl font-black text-slate-900 leading-tight">
               Picked Fresh,
-              <span className="block text-emerald-600">
-                Priced Right.
-              </span>
+              <span className="block text-emerald-600">Priced Right.</span>
             </h1>
 
             <p className="mt-4 text-slate-600 font-medium">
@@ -87,7 +84,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* RIGHT FEATURES */}
           <div className="space-y-4">
             {features.map((f, i) => (
               <div key={i} className="flex gap-4 bg-white/80 p-4 rounded-xl shadow">
@@ -105,7 +101,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* FOOTER */}
       <div className="text-center py-10 text-sm text-gray-500">
         AgriExchange © 2026 — Connecting farms directly to consumers
       </div>

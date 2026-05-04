@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
-import { TRPCReactProvider } from "~/trpc/react";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "AgriExchange",
@@ -22,8 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={geist.variable}>
       <body>
-        {/* ✅ THIS IS THE IMPORTANT FIX */}
-        <TRPCReactProvider>
+        <Providers>
           <nav className="w-full border-b bg-white px-6 py-3 flex justify-between">
             <span className="font-semibold text-xl">AgriExchange</span>
 
@@ -38,7 +37,7 @@ export default function RootLayout({
           </nav>
 
           <main>{children}</main>
-        </TRPCReactProvider>
+        </Providers>
       </body>
     </html>
   );
