@@ -1,13 +1,15 @@
 import { db } from "~/server/db";
 import { notFound } from "next/navigation";
 
-export default async function ListingPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function ListingPage({ params }: PageProps) {
+  const { id } = await params;
+
   const listing = await db.listing.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!listing) return notFound();
