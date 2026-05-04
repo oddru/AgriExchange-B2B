@@ -27,7 +27,7 @@ export default async function ListingPage({
           className="w-full h-80 object-cover"
         />
 
-        {/* DETAILS */}
+        {/* DETAILS fixed */}
         <div className="p-6 space-y-4">
           <h1 className="text-2xl font-semibold">
             {listing.name}
