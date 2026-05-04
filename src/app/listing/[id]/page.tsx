@@ -4,10 +4,12 @@ import { notFound } from "next/navigation";
 export default async function ListingPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
+
   const listing = await db.listing.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!listing) return notFound();
