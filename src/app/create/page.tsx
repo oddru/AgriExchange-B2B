@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
@@ -14,6 +16,7 @@ export default function CreatePage() {
   const [unit, setUnit] = useState("kg");
   const [category, setCategory] = useState("vegetable");
   const [file, setFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const createListing = api.listing.create.useMutation({
     onSuccess: async () => {
@@ -23,29 +26,37 @@ export default function CreatePage() {
   });
 
   const handleCreate = async () => {
-    let imageUrl;
+    try {
+      setLoading(true);
 
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
+      let imageUrl: string | null = null;
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        const data = await res.json();
+        imageUrl = data?.secure_url ?? null;
+      }
+
+      createListing.mutate({
+        name,
+        quantity,
+        price,
+        unit,
+        category,
+        imageUrl,
       });
-
-      const data = await res.json();
-      imageUrl = data.secure_url;
+    } finally {
+      setLoading(false);
     }
-
-    createListing.mutate({
-      name,
-      quantity,
-      price,
-      unit,
-      category,
-      imageUrl,
-    });
   };
 
   return (
@@ -87,14 +98,15 @@ export default function CreatePage() {
 
           <input
             type="file"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
           />
 
           <button
             onClick={handleCreate}
-            className="w-full bg-black text-white py-2 rounded"
+            disabled={loading}
+            className="w-full bg-black text-white py-2 rounded disabled:opacity-50"
           >
-            Create Listing
+            {loading ? "Creating..." : "Create Listing"}
           </button>
         </div>
       </div>
