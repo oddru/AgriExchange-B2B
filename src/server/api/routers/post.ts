@@ -20,4 +20,11 @@ export const postRouter = createTRPCRouter({
       orderBy: { createdAt: "desc" },
     });
   }),
+
+  // ✅ FIX: added missing procedure used by frontend
+  getLatest: publicProcedure.query(({ ctx }) => {
+    return ctx.db.listing.findFirst({
+      orderBy: { createdAt: "desc" },
+    });
+  }),
 });
